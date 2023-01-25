@@ -31,5 +31,5 @@ CREATE TABLE users(name text not null);
 Then migrate
 
 ```bash
-migrator migrate
+migrator migrate sqlite://hello.db
 ```

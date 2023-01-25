@@ -67,9 +67,10 @@ pub fn main() !void {
 
             if (std.mem.eql(u8, db_backend, "sqlite")) {
                 try migrate(allocator, db_url, Migrations(.sqlite));
-            }
-            if (std.mem.eql(u8, db_backend, "postgres")) {
+            } else if (std.mem.eql(u8, db_backend, "postgres")) {
                 try migrate(allocator, db_url, Migrations(.postgres));
+            } else {
+                try out.writer().print("Database driver {s} not supported\n", .{db_backend});
             }
         }
     }

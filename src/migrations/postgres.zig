@@ -1,5 +1,5 @@
 const std = @import("std");
-const pgz = @import("postgres/pgz.zig");
+const pgz = @import("pgz");
 
 const Migrations = @This();
 
@@ -33,10 +33,10 @@ pub fn getMigrated(allocator: std.mem.Allocator, db:*pgz.Connection) !Migrations
     var migrations_list = try std.ArrayListUnmanaged([:0]const u8).initCapacity(allocator, 10);
 
     const sql = "SELECT name FROM migrator_migrations ORDER BY name;";
-    var queryResult = try db.simpleQuery(sql, struct { name: []const u8 });
-    defer db.freeSimpleQuery(queryResult);
+    var result = try db.query(sql, struct { name: []const u8 });
+    defer result.deinit();
 
-    for (queryResult) |row| {
+    for (result.data) |row| {
         try migrations_list.append(allocator, try allocator.dupeZ(u8, row.name));
     }
 
@@ -75,7 +75,7 @@ pub fn runMigration(allocator: std.mem.Allocator, db:*pgz.Connection, migration:
     defer migration_file.close();
     var migration_sql = try migration_file.readToEndAllocOptions(allocator, std.math.maxInt(usize), null, 1, 0);
     defer allocator.free(migration_sql);
-    try db.simpleExec(migration_sql);
+    try db.exec(migration_sql);
 }
 
 pub fn markAsMigrated(allocator: std.mem.Allocator, db:*pgz.Connection, migration: [:0]const u8) !void {
@@ -83,7 +83,7 @@ pub fn markAsMigrated(allocator: std.mem.Allocator, db:*pgz.Connection, migratio
     defer allocator.free(literal);
     var sql = try std.fmt.allocPrint(allocator, "INSERT INTO migrator_migrations(name) VALUES({s});", .{literal});
     defer allocator.free(sql);
-    try db.simpleExec(sql);
+    try db.exec(sql);
 }
 
 pub fn assertMigrationsTable(db:*pgz.Connection) !void {
@@ -95,23 +95,21 @@ pub fn assertMigrationsTable(db:*pgz.Connection) !void {
 pub fn openDatabase(allocator: std.mem.Allocator, scheme: [:0]const u8) !*pgz.Connection {
     _ = std.mem.indexOf(u8, scheme, "postgres://") orelse return error.BadConnectionUrl;
     var db = try allocator.create(pgz.Connection);
-    db.* = pgz.Connection.init(allocator);
-    try db.connect(try std.Uri.parse(scheme));
+    db.* = try pgz.Connection.init(allocator, try std.Uri.parse(scheme));
     return db;
 }
 
 pub fn closeDatabase(db: *pgz.Connection) void {
     var allocator = db.allocator;
-    db.disconnect();
     db.deinit();
     allocator.destroy(db);
 }
 
 fn isMigrationsTableExists(db:*pgz.Connection) !bool {
-    const sql = "SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'migrator_migrations');";
-    var queryResult = try db.simpleQuery(sql, struct { value: []const u8 });
-    defer db.freeSimpleQuery(queryResult);
-    if (queryResult.len > 0 and queryResult[0].value[0] == 't') {
+    const sql = "SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'migrator_migrations') as value;";
+    var result = try db.query(sql, struct { value: []const u8 });
+    defer result.deinit();
+    if (result.data.len > 0 and result.data[0].value[0] == 't') {
         return true;
     } else {
         return false;
@@ -120,7 +118,7 @@ fn isMigrationsTableExists(db:*pgz.Connection) !bool {
 
 fn createMigrationsTable(db:*pgz.Connection) !void {
     const sql = "CREATE TABLE migrator_migrations(name text not null);";
-    try db.simpleExec(sql);
+    try db.exec(sql);
 }
 
 pub fn free(self: *Migrations) void {

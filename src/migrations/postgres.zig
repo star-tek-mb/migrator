@@ -28,7 +28,7 @@ pub fn getAll(allocator: std.mem.Allocator) !Migrations {
     return Migrations{ .allocator = allocator, .list = migrations_list };
 }
 
-pub fn getMigrated(allocator: std.mem.Allocator, db:*pgz.Connection) !Migrations {
+pub fn getMigrated(allocator: std.mem.Allocator, db: *pgz.Connection) !Migrations {
     try assertMigrationsTable(db);
     var migrations_list = try std.ArrayListUnmanaged([:0]const u8).initCapacity(allocator, 10);
 
@@ -43,7 +43,7 @@ pub fn getMigrated(allocator: std.mem.Allocator, db:*pgz.Connection) !Migrations
     return Migrations{ .allocator = allocator, .list = migrations_list };
 }
 
-pub fn getUnmigrated(allocator: std.mem.Allocator, db:*pgz.Connection) !Migrations {
+pub fn getUnmigrated(allocator: std.mem.Allocator, db: *pgz.Connection) !Migrations {
     var all = try Migrations.getAll(allocator);
     defer all.free();
     var migrated = try Migrations.getMigrated(allocator, db);
@@ -68,7 +68,7 @@ pub fn getUnmigrated(allocator: std.mem.Allocator, db:*pgz.Connection) !Migratio
     return Migrations{ .allocator = allocator, .list = migrations_list };
 }
 
-pub fn runMigration(allocator: std.mem.Allocator, db:*pgz.Connection, migration: [:0]const u8) !void {
+pub fn runMigration(allocator: std.mem.Allocator, db: *pgz.Connection, migration: [:0]const u8) !void {
     var migrations_dir = try std.fs.cwd().openDir("migrations", .{});
     defer migrations_dir.close();
     var migration_file = try migrations_dir.openFile(migration, .{});
@@ -78,7 +78,7 @@ pub fn runMigration(allocator: std.mem.Allocator, db:*pgz.Connection, migration:
     try db.exec(migration_sql);
 }
 
-pub fn markAsMigrated(allocator: std.mem.Allocator, db:*pgz.Connection, migration: [:0]const u8) !void {
+pub fn markAsMigrated(allocator: std.mem.Allocator, db: *pgz.Connection, migration: [:0]const u8) !void {
     var literal = try pgz.quoteLiteral(allocator, migration);
     defer allocator.free(literal);
     var sql = try std.fmt.allocPrint(allocator, "INSERT INTO migrator_migrations(name) VALUES({s});", .{literal});
@@ -86,7 +86,7 @@ pub fn markAsMigrated(allocator: std.mem.Allocator, db:*pgz.Connection, migratio
     try db.exec(sql);
 }
 
-pub fn assertMigrationsTable(db:*pgz.Connection) !void {
+pub fn assertMigrationsTable(db: *pgz.Connection) !void {
     if (!try Migrations.isMigrationsTableExists(db)) {
         try Migrations.createMigrationsTable(db);
     }
@@ -105,7 +105,7 @@ pub fn closeDatabase(db: *pgz.Connection) void {
     allocator.destroy(db);
 }
 
-fn isMigrationsTableExists(db:*pgz.Connection) !bool {
+fn isMigrationsTableExists(db: *pgz.Connection) !bool {
     const sql = "SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'migrator_migrations') as value;";
     var result = try db.query(sql, struct { value: []const u8 });
     defer result.deinit();
@@ -116,7 +116,7 @@ fn isMigrationsTableExists(db:*pgz.Connection) !bool {
     }
 }
 
-fn createMigrationsTable(db:*pgz.Connection) !void {
+fn createMigrationsTable(db: *pgz.Connection) !void {
     const sql = "CREATE TABLE migrator_migrations(name text not null);";
     try db.exec(sql);
 }

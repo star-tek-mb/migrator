@@ -1,15 +1,15 @@
 .{
     .name = "migrator",
-    .version = "0.0.1",
+    .version = "0.0.2",
 
     .dependencies = .{
         .sqlite3 = .{
-            .url = "https://github.com/star-tek-mb/sqlite3-zig/archive/91ce6b0374ac800efdefdaa8471b2ea0a63eee0a.tar.gz",
-            .hash = "1220a12de7e10717a031842a649906c4122cf74f45972012fba75293e047b598d072",
+            .url = "https://github.com/star-tek-mb/sqlite3-zig/archive/5636a9fd8ccf6fb00460ce0adbeec73e224361a4.tar.gz",
+            .hash = "1220702c9edf1f6a01bff94c170be22a0b456e008ab1e58953f08e47d09071000cb6",
         },
         .pgz = .{
-            .url = "https://github.com/star-tek-mb/pgz/archive/680498522828427447b688a5993ec2e38a561f95.tar.gz",
-            .hash = "12204495c9504ed4523dc9996e506cbe75de997cbea0de5683ee269e9006ed4ec0da",
+            .url = "https://github.com/star-tek-mb/pgz/archive/70674681127ebe092d06042c476518c2fbed88dd.tar.gz",
+            .hash = "122011954d2b726a12e819c010d0f7627e1487243090c319f109e1fca5629196c33d",
         },
     },
 }

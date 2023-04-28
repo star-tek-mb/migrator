@@ -4,12 +4,12 @@
 
     .dependencies = .{
         .sqlite3 = .{
-            .url = "https://github.com/star-tek-mb/sqlite3-zig/archive/5636a9fd8ccf6fb00460ce0adbeec73e224361a4.tar.gz",
-            .hash = "1220702c9edf1f6a01bff94c170be22a0b456e008ab1e58953f08e47d09071000cb6",
+            .url = "https://github.com/star-tek-mb/sqlite3-zig/archive/897a93129ecf56ef1521a5908ee4602636b18cea.tar.gz",
+            .hash = "1220f585eda542f95c332e3f9dd66faba957309b4bfeb0594c91ac0cc7950105e79e",
         },
         .pgz = .{
-            .url = "https://github.com/star-tek-mb/pgz/archive/70674681127ebe092d06042c476518c2fbed88dd.tar.gz",
-            .hash = "122011954d2b726a12e819c010d0f7627e1487243090c319f109e1fca5629196c33d",
+            .url = "https://github.com/star-tek-mb/pgz/archive/28b1b5da05c7543b78604bb63bbb99363e4d91d4.tar.gz",
+            .hash = "122065fb6fb332923fd1f34804fc08a55b3e44177c95c5579223ec993318b737f082",
         },
     },
 }

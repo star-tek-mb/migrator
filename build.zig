@@ -16,9 +16,9 @@ pub fn build(b: *std.build.Builder) void {
     exe.linkLibC();
     exe.linkLibrary(sqlite3_dep.artifact("sqlite3"));
     exe.addModule("pgz", pgz_dep.module("pgz"));
-    exe.install();
+    b.installArtifact(exe);
 
-    const run_cmd = exe.run();
+    const run_cmd = b.addRunArtifact(exe);
     run_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
         run_cmd.addArgs(args);

@@ -73,5 +73,18 @@ pub fn main() !void {
                 try out.writer().print("Database driver {s} not supported\n", .{db_backend});
             }
         }
+    } else {
+        try out.writer().print(
+            \\ migrator CLI
+            \\
+            \\ Available commands
+            \\   - create [COMMENT]
+            \\   - migrate <DB_URL>
+            \\
+            \\ DB_URL examples:
+            \\   - sqlite://database.sqlite
+            \\   - postgres://user:password@localhost:5432/mydatabase
+            \\
+        , .{});
     }
 }

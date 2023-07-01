@@ -3,7 +3,7 @@ const Migrations = @import("migrations.zig").Migrations;
 
 pub fn getDatetime(timestamp: i64) ![17]u8 {
     var ret: [17]u8 = undefined;
-    var epoch_seconds = std.time.epoch.EpochSeconds{ .secs = @intCast(u64, timestamp) };
+    var epoch_seconds = std.time.epoch.EpochSeconds{ .secs = @as(u64, @intCast(timestamp)) };
     var epoch_day = epoch_seconds.getEpochDay();
     var year_day = epoch_day.calculateYearDay();
     var month_day = year_day.calculateMonthDay();

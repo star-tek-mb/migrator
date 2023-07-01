@@ -23,7 +23,7 @@ pub fn getAll(allocator: std.mem.Allocator) !Migrations {
             return std.ascii.orderIgnoreCase(a, b) == .lt;
         }
     };
-    std.sort.sort([]const u8, migrations_list.items, {}, sorter.do);
+    std.sort.heap([]const u8, migrations_list.items, {}, sorter.do);
 
     return Migrations{ .allocator = allocator, .list = migrations_list };
 }

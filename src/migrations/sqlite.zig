@@ -23,7 +23,7 @@ pub fn getAll(allocator: std.mem.Allocator) !Migrations {
             return std.ascii.orderIgnoreCase(a, b) == .lt;
         }
     };
-    std.sort.sort([]const u8, migrations_list.items, {}, sorter.do);
+    std.sort.heap([]const u8, migrations_list.items, {}, sorter.do);
 
     return Migrations{ .allocator = allocator, .list = migrations_list };
 }
@@ -90,7 +90,7 @@ pub fn markAsMigrated(_: std.mem.Allocator, db: *sqlite3.sqlite3, migration: [:0
     var prepare_ret = sqlite3.sqlite3_prepare(db, sql, sql.len, &stmt, null);
     if (prepare_ret != sqlite3.SQLITE_OK) return error.SqlPrepareError;
     defer _ = sqlite3.sqlite3_finalize(stmt);
-    var bind_ret = sqlite3.sqlite3_bind_text(stmt, 1, migration, @intCast(c_int, migration.len), null);
+    var bind_ret = sqlite3.sqlite3_bind_text(stmt, 1, migration, @as(c_int, @intCast(migration.len)), null);
     if (bind_ret != sqlite3.SQLITE_OK) return error.SqlBindError;
     var res = sqlite3.sqlite3_step(stmt);
     if (res != sqlite3.SQLITE_DONE) return error.SqlExecuteError;

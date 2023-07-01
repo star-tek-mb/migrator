@@ -8,8 +8,8 @@
             .hash = "1220f585eda542f95c332e3f9dd66faba957309b4bfeb0594c91ac0cc7950105e79e",
         },
         .pgz = .{
-            .url = "https://github.com/star-tek-mb/pgz/archive/28b1b5da05c7543b78604bb63bbb99363e4d91d4.tar.gz",
-            .hash = "122065fb6fb332923fd1f34804fc08a55b3e44177c95c5579223ec993318b737f082",
+            .url = "https://github.com/star-tek-mb/pgz/archive/231714be7f220a9eb67cdde25b141fbcd37721dc.tar.gz",
+            .hash = "1220f9c4cb342f7a370202bce809d9910be7c9e67769ea2add3ffedbdae412758f0b",
         },
     },
 }
